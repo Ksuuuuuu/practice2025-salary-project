@@ -3,6 +3,7 @@ package service;
 import models.DepartmentEmployees;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DepartmentHandler {
     private final Map<Integer, DepartmentEmployees> departments;
@@ -13,43 +14,32 @@ public class DepartmentHandler {
 
 
     public String getStatement() {
-        StringBuilder departmentsInfo = new StringBuilder();
-        for (Integer part : departments.keySet()) {
-            departmentsInfo.append("\nОтдел ").append(part).append("\n").append(departments.get(part).getInfo());
-        }
-        return departmentsInfo.toString();
+        return departments.entrySet().stream()
+            .map(pair ->"\nОтдел " + pair.getKey() + "\n" + pair.getValue().getInfo())
+            .reduce("", (partialInfoResult, info)-> partialInfoResult + info);
     }
 
     private static Set<Integer> getDepartmentsWithHighSth(Map<Integer, Double> departmentsInfo) {
-        double maxSum = Collections.max(departmentsInfo.values());
+        double max = departmentsInfo.values().stream()
+                .max(Double::compareTo)
+                .orElse(0.0);
 
-        Set<Integer> departmentsWithHighSth = new HashSet<>();
-
-        for (Integer part : departmentsInfo.keySet()) {
-            if (departmentsInfo.get(part) == maxSum) {
-                departmentsWithHighSth.add(part);
-            }
-        }
-
-        return departmentsWithHighSth;
+        return departmentsInfo.entrySet().stream()
+                .filter(pair -> pair.getValue() == max)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
 
     }
 
     public  Set<Integer> getDepartmentsWithHighSum() {
-        Map<Integer, Double> sums = new HashMap<>();
-        for (Integer part : departments.keySet()) {
-            sums.put(part, departments.get(part).getSumSalary());
-        }
-
+        Map<Integer, Double> sums = departments.entrySet().stream()
+                                   .collect(Collectors.toMap(Map.Entry::getKey, pair-> pair.getValue().getSumSalary()));
         return getDepartmentsWithHighSth(sums);
     }
 
     public  Set<Integer> getDepartmentsWithHighAvg() {
-        Map<Integer, Double> avgs = new HashMap<>();
-        for (Integer part : departments.keySet()) {
-            avgs.put(part, departments.get(part).getAvgSalary());
-        }
-
+        Map<Integer, Double> avgs = departments.entrySet().stream()
+             .collect(Collectors.toMap(Map.Entry::getKey, pair-> pair.getValue().getAvgSalary()));
         return getDepartmentsWithHighSth(avgs);
     }
 }
