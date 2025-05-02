@@ -1,6 +1,4 @@
-package service;
-
-import models.DepartmentEmployees;
+package ru.vsu.amm.practice;
 
 import java.util.*;
 import java.util.stream.Collectors;
