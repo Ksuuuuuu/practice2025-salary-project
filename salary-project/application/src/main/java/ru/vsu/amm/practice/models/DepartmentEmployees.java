@@ -1,4 +1,4 @@
-package models;
+package ru.vsu.amm.practice.models;
 
 import java.util.ArrayList;
 import java.util.List;
