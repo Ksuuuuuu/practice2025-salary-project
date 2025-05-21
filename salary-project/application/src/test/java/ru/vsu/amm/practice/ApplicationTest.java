@@ -14,25 +14,25 @@ class ApplicationTest {
 
     @Test
     void loadStreamFromResources_shouldReturnStream() {
-        // Arrange
+        // given
         String testFileName = "info.txt";
         
-        // Act
+        // when
         InputStream result = Application.loadStreamFromResources(ReaderFile.class, testFileName);
         
-        // Assert
+        // then
         assertNotNull(result);
     }
 
         @Test
     void loadStreamFromResources_shouldReturnNull() {
-        // Arrange
+        // given
         String testFileName = "test.txt";
         
-        // Act
+        // when
         InputStream result = Application.loadStreamFromResources(ReaderFile.class, testFileName);
         
-        // Assert
+        // then
         assertNull(result);
     }
 }

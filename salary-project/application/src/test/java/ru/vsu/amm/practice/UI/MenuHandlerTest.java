@@ -25,13 +25,13 @@ class MenuHandlerTest {
     @Test
     void start_shouldPrintStatementWhenOption1Selected() throws IOException {
         try (MockedStatic<ReaderInteger> mockedReader = mockStatic(ReaderInteger.class)) {
-            // Arrange
+            // given
             mockedReader.when(() -> ReaderInteger.nextInt()).thenReturn(1).thenReturn(0);
 
-            // Act
+            // when
             menuHandler.start();
 
-            // Assert
+            // then
             verify(mockHandler).getStatement();
         }
     }
@@ -39,13 +39,13 @@ class MenuHandlerTest {
     @Test
     void start_shouldPrintDepartmentsWithHighAvgWhenOption2Selected() throws IOException {
         try (MockedStatic<ReaderInteger> mockedReader = mockStatic(ReaderInteger.class)) {
-            // Arrange
+            // given
             mockedReader.when(() -> ReaderInteger.nextInt()).thenReturn(2).thenReturn(0);
 
-            // Act
+            // when
             menuHandler.start();
 
-            // Assert
+            // then
             verify(mockHandler).getDepartmentsWithHighAvg();
         }
     }
@@ -53,55 +53,56 @@ class MenuHandlerTest {
     @Test
     void start_shouldPrintDepartmentsWithHighSumWhenOption3Selected() throws IOException {
         try (MockedStatic<ReaderInteger> mockedReader = mockStatic(ReaderInteger.class)) {
-            // Arrange
+            // given
             mockedReader.when(() -> ReaderInteger.nextInt()).thenReturn(3).thenReturn(0);
 
-            // Act
+            // when
             menuHandler.start();
 
-            // Assert
+            // then
             verify(mockHandler).getDepartmentsWithHighSum();
         }
     }
 
     @Test
     void start_shouldPrintPercentEmployeesWhenOption4Selected() throws IOException {
-        // Arrange
         try (MockedStatic<ReaderInteger> mockedReader = mockStatic(ReaderInteger.class)) {
+            //given
             mockedReader.when(() -> ReaderInteger.nextInt()).thenReturn(4).thenReturn(0);
 
-            // Act
+            // when
             menuHandler.start();
 
-            // Assert
+            // then
             verify(mockHandler).getPercentCountEmployeesByDepartents();
         }
     }
 
     @Test
     void start_shouldExitWhenOption0Selected() throws IOException {
-        // Arrange
+       
         try (MockedStatic<ReaderInteger> mockedReader = mockStatic(ReaderInteger.class)) {
+             // given
             mockedReader.when(() -> ReaderInteger.nextInt()).thenReturn(0);
 
-            // Act
+            // when
             menuHandler.start();
 
-            // Assert
+            // then
             verify(mockHandler, never()).getStatement();
         }
     }
 
     @Test
     void start_shouldHandleInvalidInput() throws IOException {
-        // Arrange
        try (MockedStatic<ReaderInteger> mockedReader = mockStatic(ReaderInteger.class)) {
+         // given
             mockedReader.when(() -> ReaderInteger.nextInt()).thenReturn(5).thenReturn(0);
 
-            // Act
+          //when
             menuHandler.start();
 
-            // Assert
+            // then
             verify(mockHandler, never()).getStatement();
        }
     }
