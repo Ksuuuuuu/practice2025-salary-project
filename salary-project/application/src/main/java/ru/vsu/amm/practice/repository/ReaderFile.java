@@ -14,10 +14,7 @@ public class ReaderFile {
         return line.split(";");
     }
 
-    public static Map<Integer, DepartmentEmployees> readFile() {
-
-        InputStream inputStream = ReaderFile.class.getClassLoader()
-                .getResourceAsStream("info.txt");
+    public static Map<Integer, DepartmentEmployees> readFile(InputStream inputStream) throws IOException {
         Map<Integer, DepartmentEmployees> departments = new HashMap<>();
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
@@ -39,9 +36,7 @@ public class ReaderFile {
                 line = reader.readLine();
 
             }
-        } catch (IOException e) {
-            System.out.println("Ошибка работы с файлом " + e.getMessage());
-        }
+        } 
 
         return departments;
 

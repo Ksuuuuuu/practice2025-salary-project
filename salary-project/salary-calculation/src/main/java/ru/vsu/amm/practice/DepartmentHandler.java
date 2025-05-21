@@ -1,6 +1,8 @@
 package ru.vsu.amm.practice;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class DepartmentHandler {
@@ -40,4 +42,13 @@ public class DepartmentHandler {
              .collect(Collectors.toMap(Map.Entry::getKey, pair-> pair.getValue().getAvgSalary()));
         return getDepartmentsWithHighSth(avgs);
     }
+
+    public Map<Integer, Double> getPercentCountEmployeesByDepartents() {
+        int commonCount = departments.values().stream().mapToInt(DepartmentEmployees::getEmployeesCount).sum();
+        if (commonCount == 0) {
+            return new HashMap<>();
+        }
+        return departments.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getEmployeesCount() * 100.0 / commonCount));
+    }
+
 }

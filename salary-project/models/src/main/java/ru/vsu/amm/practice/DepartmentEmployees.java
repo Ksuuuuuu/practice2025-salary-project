@@ -44,5 +44,9 @@ public class DepartmentEmployees {
         return sum;
     }
 
+    public int getEmployeesCount() {
+        return employeeList.size();
+    }
+
 
 }
