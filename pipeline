@@ -1,0 +1,117 @@
+pipeline {
+    parameters {
+        string(name: 'TARGET_BRANCH', defaultValue: 'develop', description: 'Укажите ветку для сборки')
+        string(name: 'DIR_COPY', defaultValue: 'C:\\Jenkins\\artefacts', description: 'Директория для публикации артефактов')
+    }
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "${params.TARGET_BRANCH}"]],
+                    userRemoteConfigs: [[url: 'https://github.com/Ksuuuuuu/practice2025-salary-project.git']]
+                ])
+            }
+        }
+        stage('Compile') {
+            steps {
+                dir('salary-project') {
+                    sh 'mvn clean compile test-compile'
+                }
+            }
+            
+        }
+        stage('Static Analysis') {
+            when {
+                expression { 
+                    params.TARGET_BRANCH == 'develop' ||
+                    env.BRANCH_NAME == 'develop'
+                }
+            }
+            steps {
+                 dir('salary-project') {
+                    sh 'mvn org.apache.maven.plugins:maven-checkstyle-plugin:3.2.0:checkstyle'
+                } 
+                 
+            }
+        }
+        stage('Test') {
+            when {
+                expression { 
+                    params.TARGET_BRANCH.startsWith("feature/")
+                }
+            }
+            steps {
+                dir('salary-project') {
+                    sh 'mvn test org.jacoco:jacoco-maven-plugin:0.8.11:report-aggregate'
+                }
+            }
+        }
+        stage('Report') {
+            steps {
+                dir('salary-project') {
+                    sh 'mvn test'
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                    junit '**/target/surefire-reports/*.xml'
+                    jacoco(
+                            execPattern: '**/target/jacoco.exec',
+                            classPattern: '**/target/classes/',
+                            sourcePattern: '**/src/main/java'
+                    )
+                    }
+                    recordIssues(
+                        tools: [checkStyle(pattern: '**/target/checkstyle-result.xml')],
+                        qualityGates: [[threshold: 1, type: 'NEW', unstable: true]]
+                    )
+                }
+            }
+        }
+        stage('Install') {
+            when {
+                allOf {
+                    expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                    expression { params.TARGET_BRANCH == 'develop' }
+                }
+            }
+            steps {
+                dir('salary-project') {
+                    sh 'mvn install -Djacoco.check.skip=true'
+                }
+            }
+        }
+        stage('CodeCoverageCheck') {
+            steps {
+                sh 'mvn clean verify'
+            }
+        }
+        stage('Publish') {
+            when {
+                allOf {
+                    expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+                    expression { params.TARGET_BRANCH == 'develop' }
+                }
+            }
+            steps {
+                dir('salary-project/application') {
+                    script {
+                        def artifactPath = sh(
+                            script: 'find target -name "application-1.0-SNAPSHOT-jar-with-dependencies.jar"',
+                            returnStdout: true
+                        ).trim()
+                        
+                        if (!artifactPath) {
+                            error "Артефакт не найден в директории target/"
+                        }
+
+                        sh "mkdir -p ${params.DIR_COPY}"
+                        
+                        def artifactName = artifactPath.split('/').last()
+                        sh "cp ${artifactPath} ${params.DIR_COPY}/${artifactName}"
+                    }
+                }
+            }
+        }
+    }
+}
