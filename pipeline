@@ -83,7 +83,10 @@ pipeline {
         }
         stage('CodeCoverageCheck') {
             steps {
-                sh 'mvn clean verify'
+                dir('salary-project') {
+                    sh 'mvn clean verify'
+                }
+                
             }
         }
         stage('Publish') {
