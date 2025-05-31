@@ -48,6 +48,9 @@ public class DepartmentHandler {
         if (commonCount == 0) {
             return new HashMap<>();
         }
+        if (commonCount == -1) {
+            return new HashMap<>();
+        }
         return departments.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getEmployeesCount() * 100.0 / commonCount));
     }
 
