@@ -1,4 +1,4 @@
-package models;
+package ru.vsu.amm.practice;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package repository;
+package ru.vsu.amm.practice.repository;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

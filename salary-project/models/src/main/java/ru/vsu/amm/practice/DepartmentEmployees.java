@@ -1,4 +1,4 @@
-package models;
+package ru.vsu.amm.practice;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +42,10 @@ public class DepartmentEmployees {
             sum += e.getSalary();
         }
         return sum;
+    }
+
+    public int getEmployeesCount() {
+        return employeeList.size();
     }
 
 

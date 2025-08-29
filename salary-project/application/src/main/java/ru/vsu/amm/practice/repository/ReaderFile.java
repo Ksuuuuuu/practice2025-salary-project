@@ -1,25 +1,23 @@
-package repository;
+package ru.vsu.amm.practice.repository;
 
-import models.DepartmentEmployees;
-import models.Employee;
+import ru.vsu.amm.practice.DepartmentEmployees;
+import ru.vsu.amm.practice.Employee;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ReaderFile {
-    private static final String path = "src/main/resources/info.txt";
 
     private static String[] splitLine(String line) {
         return line.split(";");
     }
 
-    public static Map<Integer, DepartmentEmployees> readFile() {
-
+    public static Map<Integer, DepartmentEmployees> readFile(InputStream inputStream) throws IOException {
         Map<Integer, DepartmentEmployees> departments = new HashMap<>();
-        File file = new File(path);
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
             String line = reader.readLine();
             while (line != null) {
@@ -38,9 +36,7 @@ public class ReaderFile {
                 line = reader.readLine();
 
             }
-        } catch (IOException e) {
-            System.out.println("Ошибка работы с файлом " + e.getMessage());
-        }
+        } 
 
         return departments;
 
